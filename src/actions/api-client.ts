@@ -1,9 +1,6 @@
 import { request } from "../lib/request"
-import type {
-  Product,
-  LoginResponse,
-  LoginCredentials,
-} from "../lib/types"
+import { tokenStore } from "../lib/token-store"
+import type { Product, LoginResponse, LoginCredentials } from "../lib/types"
 
 interface ProductResponse<T> {
   products: T
@@ -12,8 +9,11 @@ interface ProductResponse<T> {
   total: number
 }
 
-
 class APIClient {
+  getAccessToken() {
+    return tokenStore.get()
+  }
+
   async getProducts(): Promise<ProductResponse<Product[]>> {
     return request<ProductResponse<Product[]>>("/products")
   }
@@ -24,11 +24,17 @@ class APIClient {
       body: JSON.stringify(credentials),
     })
 
-    console.log(data)
-
+    tokenStore.set(data.accessToken)
     return data
   }
 
+  async logoutUser(): Promise<void> {
+    tokenStore.set(null)
+  }
+
+  async getCurrentLoggedInUser(): Promise<LoginResponse> {
+    return request<LoginResponse>("/auth/me")
+  }
 }
 
 export const apiClient = new APIClient()

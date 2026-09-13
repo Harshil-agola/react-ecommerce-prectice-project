@@ -1,9 +1,11 @@
-const navItem = []
+import { Link } from "react-router"
 
 export const Header = () => {
     return (
         <header>
-            <h1>Ecoom</h1>
+            <Link to="/">
+                <h1>Ecoom</h1>
+            </Link>
             <nav>
 
             </nav>

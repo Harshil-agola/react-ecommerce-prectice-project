@@ -2,26 +2,36 @@ import { createBrowserRouter, RouterProvider } from "react-router"
 import { Suspense } from "react"
 import { HomePage, ProductsPage, ProductsPageSkeleton, AuthPage } from "./pages"
 import { MainLayout, AuthLayout } from "./layouts"
+import { RequireAuth } from "./layouts/require-auth"
 
 const router = createBrowserRouter([
     {
-        element: (
-            <Suspense fallback={null}>
-                <MainLayout />
-            </Suspense>
-        ),
+        element: <RequireAuth />,
         children: [
             {
-                path: "/",
-                element: <HomePage />,
-            },
-            {
-                path: "/products",
                 element: (
-                    <Suspense fallback={<ProductsPageSkeleton />}>
-                        <ProductsPage />
+                    <Suspense fallback={null}>
+                        <MainLayout />
                     </Suspense>
                 ),
+                children: [
+                    {
+                        path: "/",
+                        element: (
+                            <Suspense fallback={<p>Loading...</p>}>
+                                <HomePage />
+                            </Suspense>
+                        ),
+                    },
+                    {
+                        path: "/products",
+                        element: (
+                            <Suspense fallback={<ProductsPageSkeleton />}>
+                                <ProductsPage />
+                            </Suspense>
+                        ),
+                    },
+                ],
             },
         ],
     },
@@ -32,7 +42,6 @@ const router = createBrowserRouter([
                 path: "/sign-in",
                 element: <AuthPage />,
             },
-
         ],
     },
 ])
